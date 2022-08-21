@@ -1,0 +1,3 @@
+[submodule "ShiftFinanceBackend"]
+	path = ShiftFinanceBackend
+	url = git@github.com:FrontendExperiments/ShiftFinancePlaid.git
