@@ -1,6 +1,7 @@
 import { withIronSessionApiRoute } from 'iron-session/next';
 import { plaidClient, sessionOptions } from '../../src/lib/plaid';
 
+
 export default withIronSessionApiRoute(exchangePublicToken, sessionOptions);
 
 async function exchangePublicToken(req, res) {
