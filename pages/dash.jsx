@@ -1,33 +1,34 @@
-import { withIronSessionSsr } from 'iron-session/next';
-import { plaidClient, sessionOptions } from '../src/lib/plaid';
+import {useEffect, useState} from "react";
+import Router from "next/router";
 
-export default function Dashboard({ balance }) {
-    return Object.entries(balance).map((entry, i) => (
-        <pre key={i}>
-      <code>{JSON.stringify(entry[1], null, 2)}</code>
-    </pre>
-    ));
-}
+export default function Dashboard() {
+    const [accounts, setAccounts] = useState([]);
+    useEffect(() => {
+        const listAccounts = async () => {
+            const response = await fetch('/api/accounts-list', {
+                method: 'POST',
+            });
 
-export const getServerSideProps = withIronSessionSsr(
-    async function getServerSideProps({ req }) {
-        const access_token = req.session.access_token;
+            const response_data = await response.json()
 
-        if (!access_token) {
-            return {
-                redirect: {
-                    destination: '/',
-                    permanent: false,
-                },
-            };
-        }
-
-        const response = await plaidClient.accountsBalanceGet({ access_token });
-        return {
-            props: {
-                balance: response.data,
-            },
+            if (response_data.error !== undefined) {
+                // Error is seen
+                alert(`error ${response_data.error}`, )
+            }
+            setAccounts(response_data.accounts)
         };
-    },
-    sessionOptions
-);
+        listAccounts();
+    }, []);
+
+    console.log(accounts)
+
+    const listItems = accounts.map((acc) =>
+        <li key={acc.account_id}>{acc.official_name}</li>
+    );
+
+    return (
+        <ul>
+            {listItems}
+        </ul>
+    );
+}

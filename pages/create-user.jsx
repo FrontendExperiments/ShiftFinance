@@ -2,11 +2,7 @@ import {useForm} from 'react-hook-form'
 import {Box, Button, Center, FormControl, FormErrorMessage, FormLabel, Input} from '@chakra-ui/react'
 import Router from "next/router";
 
-
-
 export default function CreateUser() {
-
-
     const {
         handleSubmit,
         register,

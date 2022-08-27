@@ -1,7 +1,7 @@
 import { withIronSessionApiRoute } from 'iron-session/next';
 import { plaidClient, sessionOptions } from '../../src/lib/plaid';
 import schemaQuery from "../../src/schema/mongoDBConnect";
-import {getAllAccountsFromAccessToken} from "../../src/lib/AccessTokenHandler";
+import {postAccessTokenFunctions} from "../../src/lib/AccessTokenHandler";
 
 
 export default withIronSessionApiRoute(exchangePublicToken, sessionOptions);
@@ -14,19 +14,19 @@ async function exchangePublicToken(req, res) {
         })
     }
 
-    const exchangeResponse = await plaidClient.itemPublicTokenExchange({
-        public_token: req.body.public_token,
-    });
-
-    // req.session.access_token = exchangeResponse.data.access_token;
-    await req.session.save();
-
     let schema = await schemaQuery()
     let user_token_coll = schema.collection("user_token");
-    let token = await user_token_coll.insertOne({
-        access_token: exchangeResponse.data.access_token,
-        userid: req.session.userid
-    })
+    let token_find = await user_token_coll.find({userid: req.session.userid})
+    let tokens = []
 
-    res.send({ ok: true });
+    await token_find.forEach(doc => tokens.push(doc.access_token));
+
+    let return_val = []
+
+    for (let t in tokens){
+        let result = await postAccessTokenFunctions(t)
+        return_val.push(result)
+    }
+
+    res.send({ ok: true, return_val });
 }
