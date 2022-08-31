@@ -4,6 +4,7 @@ import {withIronSessionApiRoute} from "iron-session/next";
 export default withIronSessionApiRoute(createLinkTokenHandler, sessionOptions);
 
 async function createLinkTokenHandler(req, res) {
+    console.log(req.session.userid)
     if (req.method !== 'POST') {
         res.status(405).send({ error: 'Only POST requests allowed' })
         return

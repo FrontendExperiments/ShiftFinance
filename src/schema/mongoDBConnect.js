@@ -12,12 +12,15 @@ const client = new MongoClient(url, {
 
 // Database Name
 const dbName = process.env.MONGO_DATABASE;
-const isAuthenticated = false
+let isAuthenticated = false
 
 async function connect() {
     if (!isAuthenticated){
         await client.connect();
+        isAuthenticated = true;
         console.log('Connected successfully to server');
+    } else {
+        console.log('Server connection retrieved');
     }
     return client.db(dbName);
 }

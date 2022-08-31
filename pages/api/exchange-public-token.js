@@ -16,9 +16,8 @@ async function exchangePublicToken(req, res) {
     const exchangeResponse = await plaidClient.itemPublicTokenExchange({
         public_token: req.body.public_token,
     });
-
-    // req.session.access_token = exchangeResponse.data.access_token;
     await req.session.save();
+    res.send({ ok: true });
 
     let schema = await schemaQuery()
     let user_token_coll = schema.collection("user_token");
@@ -26,6 +25,4 @@ async function exchangePublicToken(req, res) {
         access_token: exchangeResponse.data.access_token,
         userid: req.session.userid
     })
-
-    res.send({ ok: true });
 }

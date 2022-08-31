@@ -1,8 +1,7 @@
 import {withIronSessionApiRoute} from 'iron-session/next';
 import {sessionOptions} from '../../src/lib/plaid';
 import {getAllAccountsFromAccessToken} from "../../src/lib/AccessTokenHandler";
-import {getAccounts, getAllAccessTokensForUser, saveAccounts} from "../../src/lib/dbQueries";
-
+import {getAllAccessTokensForUser, saveAccounts} from "../../src/lib/dbQueries";
 
 export default withIronSessionApiRoute(accountListHandler, sessionOptions);
 
@@ -15,6 +14,7 @@ async function accountListHandler(req, res) {
         })
     }
 
-    let accounts = await getAccounts(req.session.userid)
-    res.send({ ok: true, accounts });
+    let accounts = await getAllAccountsFromAccessToken(await getAllAccessTokensForUser(req.session.userid))
+    await saveAccounts(req.session.userid, accounts)
+    res.send({ ok: true });
 }

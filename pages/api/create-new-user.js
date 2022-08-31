@@ -9,14 +9,8 @@ export default async function createNewUserHandler(req, res) {
     let schema = await schemaQuery()
     try{
         let {firstname, lastname, username} = req.body;
-
         let users_coll = schema.collection("users");
         let user = await users_coll.insertOne({firstname, lastname, username})
-        // let user = await schema.User.create({
-        //     firstname,
-        //     lastname,
-        //     username
-        // });
         console.log(user)
         return res.json(user);
     } catch (e){

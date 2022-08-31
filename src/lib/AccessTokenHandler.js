@@ -8,16 +8,23 @@ let PLAID_CONSTS = {
 
 export async function getAllAccountsFromAccessToken(accessTokenList) {
     let accounts = []
+    let accountPromises = []
 
     for (let t of accessTokenList) {
+        console.log("Retrieving:", t)
         try {
-            const response = await plaidClient.authGet({access_token: t});
-            accounts = [...accounts, ...response.data.accounts]
+            accountPromises.push(plaidClient.authGet({access_token: t}))
         } catch (e) {
             console.log("Access Token", t, "Invalid. ", e.message)
         }
-    }
 
+        let res = await Promise.all(accountPromises)
+
+        for (let r of res){
+            accounts = [...accounts, ...r.data.accounts]
+        }
+    }
+    console.log(accounts)
     return accounts
 }
 

@@ -1,5 +1,5 @@
 import {withIronSessionSsr} from 'iron-session/next';
-import {plaidClient, sessionOptions} from '../src/lib/plaid';
+import {sessionOptions} from '../src/lib/plaid';
 
 export default function Dashboard({balance}) {
     return Object.entries(balance).map((entry, i) => (
@@ -22,10 +22,10 @@ export const getServerSideProps = withIronSessionSsr(
             };
         }
 
-        const response = await plaidClient.accountsBalanceGet({access_token});
+        // const response = await plaidClient.accountsBalanceGet({access_token});
         return {
             props: {
-                balance: response.data,
+                user: userid,
             },
         };
     },

@@ -1,5 +1,6 @@
 import Router from "next/router";
 import {useEffect, useState} from 'react';
+import {Button, Box} from "@chakra-ui/react";
 
 export default function CreateUser() {
     const [usersList, setUserList] = useState([]);
@@ -29,37 +30,40 @@ export default function CreateUser() {
         listUsers();
     }, []);
 
-    async function setSessionUser(item){
-        console.log("clicked:", item.id);
+    async function setSessionUser(item) {
+        console.log("clicked:", item);
 
         const response = await fetch('/api/set-user', {
             method: 'POST',
-            body: JSON.stringify({user: item.id}),
-            headers: { 'Content-Type': 'application/json' }
+            body: JSON.stringify({user: item}),
+            headers: {'Content-Type': 'application/json'}
         });
 
         let {user} = response.json()
-        if (user !== undefined){
+        if (user !== undefined) {
             Router.push('/user-set');
-            return {
-                redirect: {
-                    destination: "/user-set",
-                    permanent: false,
-                },
-            };
         }
     }
 
     const listItems = usersList.map((user) =>
-        <li id={user._id} key={user._id} onClick={e=>setSessionUser(e.target)}>{user.username}</li>
+        <li key={user._id}>
+            <Button onClick={() => setSessionUser(user._id)}>
+                <Box w={"200px"}>
+                    {user.username}
+                </Box>
+            </Button>
+        </li>
     );
 
     return (
-        <div>
+        <Box
+            padding={5}
+            w={"400px"}
+            margin={"auto"}>
             <ul>
-            {listItems}
+                {listItems}
             </ul>
-        </div>
+        </Box>
     );
 }
 
