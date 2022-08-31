@@ -1,9 +1,9 @@
 import { withIronSessionApiRoute } from 'iron-session/next';
 import {sessionOptions} from "../../src/lib/plaid";
 
-export default withIronSessionApiRoute(handler, sessionOptions);
+export default withIronSessionApiRoute(setUserHandler, sessionOptions);
 
-async function handler(req, res) {
+async function setUserHandler(req, res) {
     if (req.method !== 'POST') {
         res.status(405).send({ error: 'Only POST requests allowed' })
         return

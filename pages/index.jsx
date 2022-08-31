@@ -1,5 +1,7 @@
 export default function Homepage() {
     return (
-        "Hello"
+        <p>
+            Hello
+        </p>
     );
 }

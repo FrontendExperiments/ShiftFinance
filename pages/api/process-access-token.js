@@ -1,12 +1,11 @@
-import { withIronSessionApiRoute } from 'iron-session/next';
-import { plaidClient, sessionOptions } from '../../src/lib/plaid';
+import {withIronSessionApiRoute} from 'iron-session/next';
+import {sessionOptions} from '../../src/lib/plaid';
 import schemaQuery from "../../src/schema/mongoDBConnect";
-import {postAccessTokenFunctions} from "../../src/lib/AccessTokenHandler";
 
 
-export default withIronSessionApiRoute(exchangePublicToken, sessionOptions);
+export default withIronSessionApiRoute(processAccessTokenHandler, sessionOptions);
 
-async function exchangePublicToken(req, res) {
+async function processAccessTokenHandler(req, res) {
     if (!req.session.userid){
         return res.json({
             error: "user not logged in",
@@ -22,11 +21,6 @@ async function exchangePublicToken(req, res) {
     await token_find.forEach(doc => tokens.push(doc.access_token));
 
     let return_val = []
-
-    for (let t in tokens){
-        let result = await postAccessTokenFunctions(t)
-        return_val.push(result)
-    }
 
     res.send({ ok: true, return_val });
 }

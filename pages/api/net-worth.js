@@ -1,6 +1,7 @@
 import {withIronSessionApiRoute} from 'iron-session/next';
 import {sessionOptions} from '../../src/lib/plaid';
 import {getAllAccountsFromAccessToken, getNetWorth} from "../../src/lib/AccessTokenHandler";
+import {getAllAccessTokensForUser} from "../../src/lib/dbQueries";
 
 
 export default withIronSessionApiRoute(exchangePublicToken, sessionOptions);
@@ -13,7 +14,7 @@ async function exchangePublicToken(req, res) {
         })
     }
 
-    let accounts = await getAllAccountsFromAccessToken(req.session.userid)
+    let accounts = await getAllAccountsFromAccessToken(await getAllAccessTokensForUser(req.session.userid))
     let net_worth = await getNetWorth(accounts)
 
     res.send({ ok: true, net_worth });

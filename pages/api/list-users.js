@@ -1,6 +1,6 @@
 import schemaQuery from "../../src/schema/mongoDBConnect"
 
-export default async function handler(req, res) {
+export default async function listUsersHandler(req, res) {
     if (req.method !== 'POST') {
         res.status(405).send({ error: 'Only POST requests allowed' })
         return

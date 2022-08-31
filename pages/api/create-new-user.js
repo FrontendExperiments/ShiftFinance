@@ -1,7 +1,6 @@
 import schemaQuery from "../../src/schema/mongoDBConnect"
 
-export default async function handler(req, res) {
-    console.log(req.body)
+export default async function createNewUserHandler(req, res) {
     if (req.method !== 'POST') {
         res.status(405).send({ message: 'Only POST requests allowed' })
         return
@@ -23,5 +22,4 @@ export default async function handler(req, res) {
     } catch (e){
         return res.status(400).send({ error: e.message })
     }
-    // return res.json({})
 }

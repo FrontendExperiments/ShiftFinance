@@ -1,5 +1,8 @@
+// import schemaQuery from "../src/schema/mongoDBConnect"
 
+test('Basic Jest', async () => {
+    // console.log(TextEncoder, TextDecoder)
+    // let schema = await schemaQuery()
 
-test('Basic Jest', () => {
     expect(3).toBe(3);
 });

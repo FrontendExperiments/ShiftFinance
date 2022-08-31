@@ -1,11 +1,9 @@
 import {plaidClient, sessionOptions} from '../../src/lib/plaid';
 import {withIronSessionApiRoute} from "iron-session/next";
-import schemaQuery from "../../src/schema/mongoDBConnect"
 
-export default withIronSessionApiRoute(handler, sessionOptions);
+export default withIronSessionApiRoute(createLinkTokenHandler, sessionOptions);
 
-async function handler(req, res) {
-
+async function createLinkTokenHandler(req, res) {
     if (req.method !== 'POST') {
         res.status(405).send({ error: 'Only POST requests allowed' })
         return

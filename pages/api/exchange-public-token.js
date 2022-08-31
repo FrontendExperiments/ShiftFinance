@@ -1,7 +1,6 @@
-import { withIronSessionApiRoute } from 'iron-session/next';
-import { plaidClient, sessionOptions } from '../../src/lib/plaid';
+import {withIronSessionApiRoute} from 'iron-session/next';
+import {plaidClient, sessionOptions} from '../../src/lib/plaid';
 import schemaQuery from "../../src/schema/mongoDBConnect";
-import {getAllAccountsFromAccessToken} from "../../src/lib/AccessTokenHandler";
 
 
 export default withIronSessionApiRoute(exchangePublicToken, sessionOptions);
