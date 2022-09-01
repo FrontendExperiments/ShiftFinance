@@ -1,8 +1,8 @@
+import {Box} from "@chakra-ui/react";
 import {useEffect, useState} from "react";
-import Router from "next/router";
 
-export default function Dashboard() {
-    const [accounts, setAccounts] = useState([]);
+
+export default function BalanceTable(props) {
     useEffect(() => {
         const listAccounts = async () => {
             const response = await fetch('/api/accounts-list', {
@@ -13,22 +13,25 @@ export default function Dashboard() {
 
             if (response_data.error !== undefined) {
                 // Error is seen
-                alert(`error ${response_data.error}`, )
+                alert(`error ${response_data.error}`,)
             }
-            setAccounts(response_data.accounts)
+            props.setAccounts(response_data.accounts)
         };
         listAccounts();
     }, []);
 
-    console.log(accounts)
-
-    const listItems = accounts.map((acc) =>
+    const listItems = props.accounts.map((acc) =>
         <li key={acc.account_id}>{acc.official_name}</li>
     );
 
     return (
-        <ul>
-            {listItems}
-        </ul>
+        <Box
+            padding={5}
+            w={"400px"}
+            margin={"auto"}>
+            <ul>
+                {listItems}
+            </ul>
+        </Box>
     );
 }
