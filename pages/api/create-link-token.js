@@ -18,12 +18,27 @@ async function createLinkTokenHandler(req, res) {
     }
 
     const tokenResponse = await plaidClient.linkTokenCreate({
-        user: { client_user_id: process.env.PLAID_CLIENT_ID },
-        client_name: "Plaid's Tiny Quickstart",
+        user: {
+            client_user_id: req.session.userid
+        },
+        client_name: "ShiftFinance Web Client",
         language: 'en',
-        products: ['auth'],
+        products: [
+            // 'assets',
+            'auth',
+            // 'employment',
+            // 'identity',
+            // 'income_verification',
+            // 'identity_verification',
+            // 'investments',
+            // 'liabilities',
+            // 'payment_initiation',
+            // 'standing_orders',
+            'transactions',
+            // 'transfer'
+        ],
         country_codes: ['US'],
-        redirect_uri: process.env.PLAID_SANDBOX_REDIRECT_URI,
+        redirect_uri: process.env.PLAID_REDIRECT_URI,
     });
 
     return res.json(tokenResponse.data);

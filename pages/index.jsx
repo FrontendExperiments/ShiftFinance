@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import BalanceTable from "../components/active/BalanceWidget";
 import AccountsSyncButton from "../components/active/AccountsSyncButton";
 import PlaidAddAccountButton from "../components/active/PlaidAddAccountButton";
@@ -10,6 +10,15 @@ import {useRouter} from "next/router";
 export default function Dashboard({userid}) {
     const [accounts, setAccounts] = useState([]);
     const router = useRouter()
+
+
+    useEffect(()=>{
+        console.log("render time index:", userid)
+        if (userid === null || userid == "" || userid == undefined){
+            router.push("/login").then(r => {})
+        }
+    }, [])
+
 
     const handleClick = async (e, href) => {
         e.preventDefault()

@@ -2,7 +2,6 @@ import {Button} from "@chakra-ui/react";
 
 export default function TransactionsSyncButton({setTransactions}) {
     const syncTransactions = async () => {
-        console.log("Sync transactions running!??")
         await fetch('/api/sync-transactions', {method: 'POST',})
             .then((r) => r.json())
             .then(d => {

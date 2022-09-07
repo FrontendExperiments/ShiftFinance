@@ -13,7 +13,8 @@ export default function BalanceTable(props) {
 
             if (response_data.error !== undefined) {
                 // Error is seen
-                alert(`error ${response_data.error}`,)
+                console.log(`error`, response_data.error)
+                return
             }
             props.setAccounts(response_data.accounts)
         };
@@ -21,7 +22,7 @@ export default function BalanceTable(props) {
     }, []);
 
     const listItems = props.accounts.map((acc) =>
-        <li key={acc.account_id}>{acc.official_name}</li>
+        <li key={acc.account_id}>{acc.official_name || acc.name}</li>
     );
 
     return (

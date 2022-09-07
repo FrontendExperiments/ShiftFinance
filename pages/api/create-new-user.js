@@ -1,4 +1,4 @@
-import schemaQuery from "../../src/schema/mongoDBConnect"
+import {saveUser} from "../../src/lib/dbQueries";
 
 export default async function createNewUserHandler(req, res) {
     if (req.method !== 'POST') {
@@ -6,12 +6,9 @@ export default async function createNewUserHandler(req, res) {
         return
     }
 
-    let schema = await schemaQuery()
-    try{
-        let {firstname, lastname, username} = req.body;
-        let users_coll = schema.collection("users");
-        let user = await users_coll.insertOne({firstname, lastname, username})
-        console.log(user)
+    try {
+        let {firstname, lastname, username} = req.body
+        let user = saveUser({firstname, lastname, username})
         return res.json(user);
     } catch (e){
         return res.status(400).send({ error: e.message })

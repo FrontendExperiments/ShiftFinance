@@ -1,6 +1,7 @@
 import {withIronSessionApiRoute} from 'iron-session/next';
 import {plaidClient, sessionOptions} from '../../src/lib/plaid';
 import schemaQuery from "../../src/schema/mongoDBConnect";
+import {saveAccessToken} from "../../src/lib/dbQueries";
 
 
 export default withIronSessionApiRoute(exchangePublicToken, sessionOptions);
@@ -17,12 +18,6 @@ async function exchangePublicToken(req, res) {
         public_token: req.body.public_token,
     });
     await req.session.save();
+    await saveAccessToken(exchangeResponse.data.access_token, req.session.userid)
     res.send({ ok: true });
-
-    let schema = await schemaQuery()
-    let user_token_coll = schema.collection("user_token");
-    let token = await user_token_coll.insertOne({
-        access_token: exchangeResponse.data.access_token,
-        userid: req.session.userid
-    })
 }

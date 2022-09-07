@@ -5,7 +5,6 @@ import {createColumnHelper} from "@tanstack/react-table";
 
 export default function TransactionsTable() {
     const [transactions, setTransactions] = useState([]);
-    let setTxWrapper = t => setTransactions(t)
 
     let getTransactions = () =>
         fetch('/api/get-transactions', {method: 'POST',})
@@ -37,6 +36,10 @@ export default function TransactionsTable() {
             cell: (info) => info.getValue(),
             header: "Authorized Date"
         }),
+        columnHelper.accessor("date", {
+            cell: (info) => info.getValue(),
+            header: "Posted Date"
+        }),
         columnHelper.accessor("name", {
             cell: (info) => info.getValue(),
             header: "Transaction Name",
@@ -59,7 +62,7 @@ export default function TransactionsTable() {
 
     return (
         <>
-            <TransactionsSyncButton setTransactions={setTxWrapper}/>
+            <TransactionsSyncButton setTransactions={setTransactions}/>
             <DataTable columns={columns} data={transactions}/>
         </>
     );

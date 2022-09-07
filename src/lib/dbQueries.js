@@ -1,16 +1,27 @@
 import schemaQuery from "../schema/mongoDBConnect";
 import {Promise} from "mongodb";
-
+import {refreshAccessTokenLink} from "./AccessTokenHandler";
 
 export async function getAllAccessTokensForUser(userid) {
     const schema = await schemaQuery()
 
     let user_token_coll = schema.collection("user_token");
-    let token_find = await user_token_coll.find({userid})
+    let token_find = await user_token_coll.find({userid, status: 'enabled'})
     let tokens = []
 
     await token_find.forEach(doc => tokens.push(doc.access_token));
     console.log("Fetched Access Tokens length:", tokens.length)
+
+    for (let t of tokens) {
+        await refreshAccessTokenLink(t, userid)
+            .catch((e) => {
+                let data = e.response.data.error_message
+                console.log(data)
+                if (!data.includes('Update mode: All provided products are authorized')){
+                    console.log(e)
+                }
+            })
+    }
     return tokens
 }
 
@@ -19,8 +30,21 @@ export async function getAllUsers() {
 
     let all_users_list = []
     let users_coll = schema.collection("users");
-    await (await users_coll.find()).forEach(doc => all_users_list.push(doc));
+    await (await users_coll.find({environment: process.env.PLAID_ENV || 'sandbox'})).forEach(doc => all_users_list.push(doc));
     return all_users_list
+}
+
+export async function saveUser({firstname, lastname, username}) {
+    let schema = await schemaQuery()
+    // let {firstname, lastname, username} = req.body;
+    let users_coll = schema.collection("users");
+    let user = await users_coll.insertOne({
+        firstname,
+        lastname,
+        username,
+        environment: process.env.PLAID_ENV || 'sandbox'
+    })
+    console.log(user)
 }
 
 export async function saveAccounts(userid, accountList) {
@@ -114,9 +138,9 @@ async function addTransaction(added) {
 }
 
 export async function saveTransactionsToDB({added, modified, removed}) {
-    let addedc = await addTransaction(added).then(r => console.log("added transactions:", r.length))
-    let modifiedc = await modifyTransactions(modified).then(r => console.log("modified transactions:", r.length))
-    let removedc = await removeTransaction(removed).then(r => console.log("removed transactions:", r.length))
+    await addTransaction(added).then(r => console.log("added transactions:", r.length))
+    await modifyTransactions(modified).then(r => console.log("modified transactions:", r.length))
+    await removeTransaction(removed).then(r => console.log("removed transactions:", r.length))
 }
 
 export async function getLastTransactions(accountid, page) {
@@ -133,4 +157,14 @@ export async function getLastTransactions(accountid, page) {
     let acc_list = []
     await acc.forEach(doc => acc_list.push(doc));
     return acc_list
+}
+
+export async function saveAccessToken(token, userid){
+    let schema = await schemaQuery()
+    let user_token_coll = schema.collection("user_token");
+    return await user_token_coll.insertOne({
+        access_token: token,
+        userid: userid,
+        status: 'enabled',
+    })
 }

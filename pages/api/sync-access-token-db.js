@@ -6,7 +6,7 @@ import {getAllAccessTokensForUser, saveAccounts} from "../../src/lib/dbQueries";
 export default withIronSessionApiRoute(accountListHandler, sessionOptions);
 
 async function accountListHandler(req, res) {
-    console.log("Accounts List get request")
+    console.log("Accounts sync token request")
     if (!req.session.userid){
         return res.send({
             error: "user not logged in",

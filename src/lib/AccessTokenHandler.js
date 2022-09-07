@@ -13,13 +13,22 @@ export async function getAllAccountsFromAccessToken(accessTokenList) {
 
     for (let t of accessTokenList) {
         console.log("Retrieving:", t)
-        try {
-            accountPromises.push(plaidClient.authGet({access_token: t}))
-        } catch (e) {
-            console.log("Access Token", t, "Invalid. ", e.message)
-        }
+        let res = []
+            // accountPromises.push()
+            await plaidClient.authGet({access_token: t})
+                .then(d => {
+                    res.push(d)
+                })
+                .catch(e => {
+                    if ("NO_AUTH_ACCOUNTS" !== e.response.data.error_code) {
+                        console.log(e.response.data)
+                        throw e.response.data
+                    }
+                })
 
-        let res = await Promise.all(accountPromises)
+        // let res = await Promise.all(accountPromises).catch(e=>{
+        //     console.log(e.response.data)
+        // })
 
         for (let r of res) {
             accounts = [...accounts, ...r.data.accounts]
@@ -70,4 +79,32 @@ export async function getNetWorth(accounts) {
         }
     }
     return available_balance
+}
+
+export async function refreshAccessTokenLink(token, userid) {
+    return plaidClient.linkTokenCreate({
+        user: {
+            client_user_id: userid
+        },
+        client_name: "ShiftFinance Web Client",
+        language: 'en',
+        products: [
+            // 'assets',
+            'auth',
+            // 'employment',
+            // 'identity',
+            // 'income_verification',
+            // 'identity_verification',
+            // 'investments',
+            // 'liabilities',
+            // 'payment_initiation',
+            // 'standing_orders',
+            'transactions',
+            // 'transfer',
+        ],
+        country_codes: ['US'],
+        // redirect_uri: process.env.PLAID_REDIRECT_URI,
+        access_token: token,
+
+    })
 }

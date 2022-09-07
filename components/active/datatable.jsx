@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {chakra, Table, Tbody, Td, Th, Thead, Tr} from "@chakra-ui/react";
 import {TriangleDownIcon, TriangleUpIcon} from "@chakra-ui/icons";
-import {flexRender, getCoreRowModel, getSortedRowModel, SortingState, useReactTable} from "@tanstack/react-table";
+import {flexRender, getCoreRowModel, getSortedRowModel, useReactTable} from "@tanstack/react-table";
 
 export function DataTable({data, columns}) {
     const [sorting, setSorting] = useState([]);
