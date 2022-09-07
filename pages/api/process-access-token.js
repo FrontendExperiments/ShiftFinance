@@ -1,6 +1,5 @@
 import {withIronSessionApiRoute} from 'iron-session/next';
 import {sessionOptions} from '../../src/lib/plaid';
-import schemaQuery from "../../src/schema/mongoDBConnect";
 
 
 export default withIronSessionApiRoute(processAccessTokenHandler, sessionOptions);

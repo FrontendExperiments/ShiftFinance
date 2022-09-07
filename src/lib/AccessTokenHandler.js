@@ -1,4 +1,5 @@
 import {plaidClient} from "./plaid";
+import {getLatestTransactionCursor, saveLatestTransactionCursor, saveTransactionsToDB} from "./dbQueries";
 
 let PLAID_CONSTS = {
     DEPOSITORY: "depository",
@@ -20,12 +21,41 @@ export async function getAllAccountsFromAccessToken(accessTokenList) {
 
         let res = await Promise.all(accountPromises)
 
-        for (let r of res){
+        for (let r of res) {
             accounts = [...accounts, ...r.data.accounts]
         }
     }
-    console.log(accounts)
     return accounts
+}
+
+export async function updateTransactions(accessToken) {
+    let transactionsList = [{"blank test": 1}]
+
+    let hasMore = true;
+    let cursor = await getLatestTransactionCursor(accessToken);
+
+    // Iterate through each page of new transaction updates for item
+    while (hasMore) {
+        const request = {
+            access_token: accessToken,
+            cursor: cursor,
+        };
+        const response = await plaidClient.transactionsSync(request);
+        const data = response.data;
+
+        let added = data.added
+        let modified = data.modified
+        let removed = data.removed;
+
+        hasMore = data.has_more;
+
+        // Update cursor to the next cursor
+        cursor = data.next_cursor;
+        await saveTransactionsToDB({added, modified, removed})
+        await saveLatestTransactionCursor(accessToken, cursor)
+    }
+
+    return transactionsList
 }
 
 

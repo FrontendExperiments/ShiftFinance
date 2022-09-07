@@ -1,12 +1,12 @@
 import {withIronSessionApiRoute} from 'iron-session/next';
 import {sessionOptions} from '../../src/lib/plaid';
-import {getAccounts} from "../../src/lib/dbQueries";
+import {updateTransactions} from "../../src/lib/AccessTokenHandler";
+import {getAllAccessTokensForUser} from "../../src/lib/dbQueries";
 
 
 export default withIronSessionApiRoute(accountListHandler, sessionOptions);
 
 async function accountListHandler(req, res) {
-    console.log("Accounts List get request")
     if (!req.session.userid){
         return res.send({
             error: "user not logged in",
@@ -14,6 +14,11 @@ async function accountListHandler(req, res) {
         })
     }
 
-    let accounts = await getAccounts(req.session.userid)
-    res.send({ ok: true, accounts });
+    let accessTokenlist = await getAllAccessTokensForUser(req.session.userid)
+    let transactions = []
+
+    for (let t of accessTokenlist){
+        await updateTransactions(t)
+    }
+    res.send({ ok: true, transactions});
 }

@@ -20,7 +20,7 @@ async function connect() {
         isAuthenticated = true;
         console.log('Connected successfully to server');
     } else {
-        console.log('Server connection retrieved');
+        // console.log('Server connection retrieved');
     }
     return client.db(dbName);
 }
